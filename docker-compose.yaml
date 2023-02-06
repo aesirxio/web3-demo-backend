@@ -16,7 +16,7 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    command: [ 'node', 'index' ]
+    command: [ 'npx', 'nodemon' ]
 
   mongo:
     image: mongo:6.0.2
