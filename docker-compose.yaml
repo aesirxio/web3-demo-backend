@@ -1,0 +1,42 @@
+services:
+  node:
+    image: node:14-alpine
+    container_name: node
+    volumes:
+      - type: bind
+        source: ./api
+        target: /app
+    working_dir: /app
+    restart: always
+    ports:
+      - protocol: tcp
+        published: ${WEB_PORT}
+        target: 80
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: [ 'node', 'index' ]
+
+  mongo:
+    image: mongo:6.0.2
+    restart: always
+    ports:
+      - protocol: tcp
+        published: ${MONGO_PORT}
+        target: 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-aesirxweb3}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-demo}
+    volumes:
+      - type: volume
+        source: mongo
+        target: /data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 10s
+      retries: 50
+      start_period: 3s
+volumes:
+  mongo: {}
