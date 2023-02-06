@@ -1,4 +1,4 @@
-# AesirX demo web3 Smart Contract
+# AesirX demo web3 backend
 
 ## Excerpt
 
