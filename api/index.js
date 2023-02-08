@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-
 require("dotenv-flow").config();
+
+const cors = require("cors");
 
 // Import expressinde
 const express = require("express");
@@ -11,6 +12,12 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 // Initialise the app
 const app = express();
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Setup environment variables
 const port = process.env.PORT || 3000;
