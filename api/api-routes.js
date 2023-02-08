@@ -7,7 +7,10 @@ router.get("/", function (req, res) {
   res.status(404).end();
 });
 
+// Account routes
 const accountController = require("./controllers/accountController");
+
+router.route("/account/v1/:account/nonce").get(accountController.getNonce);
 
 // Export API routes
 module.exports = router;

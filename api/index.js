@@ -14,8 +14,14 @@ const app = express();
 
 // Setup environment variables
 const port = process.env.PORT || 3000;
+const dbUser = process.env.DBUSER || "aesirxweb3";
+const dbPass = process.env.DBPASS || "demo";
 const dbHost = process.env.DBHOST || "localhost";
-const dbName = process.env.DBNAME || "aesirxweb3demo";
+const dbName = process.env.DBNAME || "aesirxweb3";
+
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 // Import routes
 const apiRoutes = require("./api-routes");
@@ -28,7 +34,7 @@ app.use(
 app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
 mongoose
-  .connect("mongodb://" + dbHost + "/" + dbName, {
+  .connect("mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/" + dbName, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
