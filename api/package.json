@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/aesirxio/web3-demo-backend#readme",
   "dependencies": {
+    "@concordium/node-sdk": "^6",
+    "@grpc/grpc-js": "^1",
     "body-parser": "^1",
     "dotenv-flow": "^3",
     "express": "^4",
