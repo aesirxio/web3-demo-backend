@@ -10,7 +10,12 @@ router.get("/", function (req, res) {
 // Account routes
 const accountController = require("./controllers/accountController");
 
-router.route("/account/v1/:account/nonce").get(accountController.getNonce);
+router.route("/account/v1:account/nonce").get(accountController.getNonce);
+
+// Product routes
+const productController = require("./controllers/productController");
+
+router.route("/product/v1").post(productController.addProduct);
 
 // Export API routes
 module.exports = router;

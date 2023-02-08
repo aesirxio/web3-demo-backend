@@ -4,9 +4,6 @@ const fs = require("fs");
 // Import account model
 const Account = require("../models/accountModel");
 
-const Concordium = require("../web3/concordium");
-const concordium = new Concordium();
-
 exports.getNonce = async (req, res) => {
   const nonce = Math.floor(Math.random() * 999999999) + 1;
 
