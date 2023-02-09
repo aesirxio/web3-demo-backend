@@ -12,12 +12,12 @@ This demo specifically demonstrates how [AesirX](https://aesirx.io) uses the Con
 
 Additionally, it also shows how the blockchain can be used to grant data access to other accounts through delegation or consent, by using RegisterData blocks.
 
-# Prerrequisites
+## Prerrequisites
 
 - [Docker](https://www.docker.com/get-started/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-# Setup
+## Setup
 
 1. Clone the `.env.dist` file in the root folder fo this project as `.env` and customize your own environment. Typically the most important considerations are:
 
