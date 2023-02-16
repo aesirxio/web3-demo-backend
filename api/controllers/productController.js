@@ -60,8 +60,5 @@ exports.list = async (req, res) => {
         };
       })
     );
-
-    console.log(res.json); debugger; return;
-
   });
 };
