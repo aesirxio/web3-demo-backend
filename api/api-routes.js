@@ -15,7 +15,8 @@ const storage = multer.diskStorage({
     cb(null, dirImg);
   },
   filename: function (req, image, cb) {
-    cb(null, Date.now()  + '_' + image.originalname);
+    const ext = mime.extension(image.mimetype);
+    cb(null, req.body.name + '_' + Date.now() + '.' + ext);
   },
 });
 const upload = multer({ storage: storage });
@@ -33,7 +34,7 @@ router.route("/account/v1/:account/nonce").get(accountController.getNonce);
 // Product routes
 const productController = require("./controllers/productController");
 
-router.route("/product/v1").post(upload.single('image'), productController.add);
+router.route("/product/v1").post(upload.single('main_image'), productController.add);
 router.route("/product/v1/:account").get(productController.list);
 
 // Export API routes

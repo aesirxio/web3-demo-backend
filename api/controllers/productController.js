@@ -15,7 +15,7 @@ exports.add = async (req, res) => {
     description: req.body.description,
     nftBlock: req.body.block,
     nftToken: req.body.token,
-    image: req.file.path,
+    main_image: req.file.path,
   });
   res.status(201);
   res.json({ success: true });
@@ -56,7 +56,7 @@ exports.list = async (req, res) => {
           description: product.description,
           block: product.nftBlock,
           token: product.nftToken,
-          image: product.image,
+          main_image: product.main_image,
         };
       })
     );
