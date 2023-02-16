@@ -15,6 +15,7 @@ exports.add = async (req, res) => {
     description: req.body.description,
     nftBlock: req.body.block,
     nftToken: req.body.token,
+    image: req.file.path,
   });
   res.status(201);
   res.json({ success: true });

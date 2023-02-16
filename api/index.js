@@ -41,7 +41,7 @@ app.use(
 app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
 mongoose
-  .connect("mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/" + dbName, {
+  .connect("mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/" + dbName + "?authSource=admin", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
