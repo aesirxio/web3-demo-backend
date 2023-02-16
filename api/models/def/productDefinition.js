@@ -20,7 +20,7 @@ module.exports.product = function () {
       type: String,
       required: false,
     },
-    image: {
+    file: {
       type: String,
       required: false,
     },
