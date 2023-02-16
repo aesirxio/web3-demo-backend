@@ -15,8 +15,14 @@ const storage = multer.diskStorage({
     cb(null, dirImg);
   },
   filename: function (req, image, cb) {
-    const ext = mime.extension(image.mimetype);
-    cb(null, req.body.name + '_' + Date.now() + '.' + ext);
+    let ext = mime.extension(image.mimetype);
+    let imageName = image.originalname;
+
+    if (typeof req.body.name !== 'undefined') {
+        imageName = req.body.name + '_' + Date.now() + '.' + ext;
+    }
+
+    cb(null, imageName.replace(/\s/g, '_'));
   },
 });
 const upload = multer({ storage: storage });
