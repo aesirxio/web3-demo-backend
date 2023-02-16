@@ -10,17 +10,17 @@ const concordium = new Concordium();
 
 const mime   = require('mime-types');
 const multer = require("multer");
-let dirImg   = './image/';
+let dirImg   = '/image/';
 
 exports.add = async (req, res) => {
 
-  if (!fs.existsSync(dirImg)){
-    fs.mkdirSync(dirImg);
+  if (!fs.existsSync('.' + dirImg)){
+    fs.mkdirSync('.' + dirImg);
   }
     let ext = mime.extension(req.file.mimetype);
     let imageName = req.body.name.replace(/\s/g, '_') + '_' + Date.now() + '.' + ext;
 
-  fs.writeFile(dirImg + imageName, req.file.buffer, (err) => {
+  fs.writeFile('.' + dirImg + imageName, req.file.buffer, (err) => {
     if (err) throw err;
   });
 
