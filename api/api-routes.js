@@ -11,12 +11,11 @@ if (!fs.existsSync(dirImg)){
     fs.mkdirSync(dirImg);
 }
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (req, image, cb) {
     cb(null, dirImg);
   },
-  filename: function (req, file, cb) {
-    const ext = mime.extension(file.mimetype);
-    cb(null, file.fieldname + '-' + Date.now() + '.' + ext);
+  filename: function (req, image, cb) {
+    cb(null, Date.now()  + '_' + image.originalname);
   },
 });
 const upload = multer({ storage: storage });
@@ -34,7 +33,7 @@ router.route("/account/v1/:account/nonce").get(accountController.getNonce);
 // Product routes
 const productController = require("./controllers/productController");
 
-router.route("/product/v1").post(upload.single('file'), productController.add);
+router.route("/product/v1").post(upload.single('image'), productController.add);
 router.route("/product/v1/:account").get(productController.list);
 
 // Export API routes
