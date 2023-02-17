@@ -20,5 +20,10 @@ const productController = require("./controllers/productController");
 router.route("/product/v1").post(multer().single('main_image'), productController.add);
 router.route("/product/v1/:account").get(productController.list);
 
+// Token routes
+const tokenController = require("./controllers/tokenController");
+
+router.route("/token/v1/:token").get(tokenController.list);
+
 // Export API routes
 module.exports = router;
