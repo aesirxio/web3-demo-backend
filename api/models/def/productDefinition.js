@@ -20,5 +20,9 @@ module.exports.product = function () {
       type: String,
       required: false,
     },
+    main_image: {
+      type: String,
+      required: false,
+    },
   };
 };

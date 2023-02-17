@@ -1,6 +1,8 @@
 // api-routes.js
 // Initialize express router and cache
 const router = require("express").Router();
+// const concordium = new Concordium();
+const multer = require('multer');
 
 // Set default API response
 router.get("/", function (req, res) {
@@ -15,7 +17,7 @@ router.route("/account/v1/:account/nonce").get(accountController.getNonce);
 // Product routes
 const productController = require("./controllers/productController");
 
-router.route("/product/v1").post(productController.add);
+router.route("/product/v1").post(multer().single('main_image'), productController.add);
 router.route("/product/v1/:account").get(productController.list);
 
 // Export API routes
