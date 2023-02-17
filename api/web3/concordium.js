@@ -4,6 +4,8 @@ const {
   deserializeReceiveReturnValue,
   verifyMessageSignature,
   SchemaVersion,
+  CcdAmount,
+  AccountTransactionType
 } = require("@concordium/node-sdk");
 
 // Setup environment variables
@@ -49,11 +51,44 @@ class Concordium {
       SchemaVersion.V2
     );
 
+    if (!account)
+    {
+      return returnValue.all_tokens;
+    }
+
     const data = returnValue.state.filter((accountInfo) => {
       return accountInfo[0].Account[0] === account;
     });
 
     return data[0][1].owned_tokens;
+  }
+  async getNextNFT() {
+    return String(Object.keys(await this.listNFTs()).length + 1).padStart(
+        8,
+        "0"
+    );
+  }
+  async mintNFT(address, token) {
+    return await this.client.sendTransaction(
+        address,
+        AccountTransactionType.Update,
+        {
+          amount: new CcdAmount(BigInt(0)),
+          contractAddress: {
+            index: BigInt(this.contractIndex),
+            subindex: BigInt(this.contractSubindex),
+          },
+          receiveName: this.contractName + ".mint",
+          maxContractExecutionEnergy: BigInt(10000),
+        },
+        {
+          owner: {
+            Account: [address],
+          },
+          tokens: [token],
+        },
+        this.rawNFTModuleSchema
+    );
   }
 }
 

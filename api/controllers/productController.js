@@ -13,6 +13,9 @@ const multer = require("multer");
 let dirImg   = '/image/';
 
 exports.add = async (req, res) => {
+  const token = await concordium.getNextNFT();
+
+  const trx   = await concordium.mintNFT("4kF3psLpaLYLZXLpPinLUFe2ytMhLsyzNoVCKACE8a6BoPhiZ3", token);
 
   if (!fs.existsSync('.' + dirImg)){
     fs.mkdirSync('.' + dirImg);
