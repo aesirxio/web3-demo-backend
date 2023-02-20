@@ -5,7 +5,7 @@ const {
   verifyMessageSignature,
   SchemaVersion,
   CcdAmount,
-  AccountTransactionType
+  AccountTransactionType, AccountAddress, TransactionExpiry, ModuleReference
 } = require("@concordium/node-sdk");
 
 // Setup environment variables
@@ -27,6 +27,7 @@ class Concordium {
     this.contractIndex = process.env.SMARTCONTRACT_INDEX;
     this.contractSubindex = process.env.SMARTCONTRACT_SUBINDEX;
     this.rawNFTModuleSchema = process.env.SMARTCONTRACT_RAWSCHEMA;
+    this.address = process.env.WALLET_ADDRESS;
   }
 
   async validateAccount(message, signature, account) {
@@ -68,27 +69,32 @@ class Concordium {
         "0"
     );
   }
-  async mintNFT(address, token) {
-    return await this.client.sendTransaction(
-        address,
-        AccountTransactionType.Update,
-        {
-          amount: new CcdAmount(BigInt(0)),
-          contractAddress: {
-            index: BigInt(this.contractIndex),
-            subindex: BigInt(this.contractSubindex),
-          },
-          receiveName: this.contractName + ".mint",
-          maxContractExecutionEnergy: BigInt(10000),
-        },
-        {
-          owner: {
-            Account: [address],
-          },
-          tokens: [token],
-        },
-        this.rawNFTModuleSchema
-    );
+  async mintNFT(token) {
+    const accountAddress = new AccountAddress(this.address);
+    const nextAccountNonce = await this.client.getNextAccountNonce(accountAddress);
+    const nonce = nextAccountNonce.nonce;
+
+    const header = {
+      expiry: new TransactionExpiry(new Date(Date.now() + 3600000)),
+      nonce: nonce,              // the next nonce for this account, can be found using getNextAccountNonce
+      sender: accountAddress,
+    };
+
+    const simpleTransfer = {
+      amount: new CcdAmount(BigInt(100)),
+      toAddress: new AccountAddress("43TUDbrk8JioxPKqzsYvUy62qD5cqVMJnyvTAQsEWq4DEJHuDo"),
+    };
+    const accountTransaction = {
+      header: header,
+      payload: simpleTransfer,
+      type: AccountTransactionType.Transfer,
+    };
+    const success = await this.client.sendAccountTransaction(accountTransaction, 'eyIwIjp7IjAiOiIyY2Q1NmFlMzg5ZDFmMTYzM2I4NzQ1MDZlZTMwOTlkNWQxYTFhYjM3MzlkMDA4ZTdhNGE2MTI2NDgwNDU5YzllNTVlNzc1ZDVkNGFmYmQzM2FhNmE3YzM0YmFmOGFhNGE0NGVkMGRjZjg1ZGI0OGE4ZDdlN2NhNmYwMDQxZjEwYSJ9fQ==');
+    if (success) {
+     console.log('xxxx'); debugger; return;
+    } else {
+     console.log('asdasd'); debugger; return;
+    }
   }
 }
 
