@@ -81,7 +81,7 @@ class Concordium {
     const contractName        = this.contractName;
     const receiveFunctionName = "mint";
     const receiveName         = contractName + '.' + receiveFunctionName;
-    const rawModuleSchema     = this.rawNFTModuleSchema;
+    const rawModuleSchema     = Buffer.from(this.rawNFTModuleSchema);
     const schemaVersion       = SchemaVersion.V1;
 
     const inputParams = serializeUpdateContractParameters(

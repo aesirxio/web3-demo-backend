@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/aesirxio/web3-demo-backend#readme",
   "dependencies": {
-    "@concordium/browser-wallet-api-helpers": "^2.0.0",
     "@concordium/node-sdk": "^6",
     "@grpc/grpc-js": "^1",
     "body-parser": "^1",
