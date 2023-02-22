@@ -8,6 +8,7 @@ const {
   AccountTransactionType, AccountAddress, TransactionExpiry, buildBasicAccountSigner,
   signTransaction, serializeUpdateContractParameters
 } = require("@concordium/node-sdk");
+const fs = require("fs");
 
 // Setup environment variables
 const concordiumNode = process.env.CONCORDIUM_NODE || "";
@@ -77,17 +78,19 @@ class Concordium {
     const nonce            = nextAccountNonce.nonce;
     const signer           = await buildBasicAccountSigner(this.private_key);
 
-    const userInput           = -2000000;
     const contractName        = this.contractName;
     const receiveFunctionName = "mint";
     const receiveName         = contractName + '.' + receiveFunctionName;
-    const rawModuleSchema     = Buffer.from(this.rawNFTModuleSchema);
+    const rawModuleSchema     = Buffer.from(fs.readFileSync('./schema.bin'));
     const schemaVersion       = SchemaVersion.V1;
-
+    const parameters          = {
+      owner: {Account: [this.address]},
+      tokens: [token]
+    }
     const inputParams = serializeUpdateContractParameters(
         contractName,
         receiveFunctionName,
-        userInput,
+        parameters,
         rawModuleSchema,
         schemaVersion
     );
