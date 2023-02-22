@@ -5,7 +5,8 @@ const {
   verifyMessageSignature,
   SchemaVersion,
   CcdAmount,
-  AccountTransactionType, AccountAddress, TransactionExpiry, ModuleReference
+  AccountTransactionType, AccountAddress, TransactionExpiry, buildBasicAccountSigner,
+  signTransaction, serializeUpdateContractParameters
 } = require("@concordium/node-sdk");
 
 // Setup environment variables
@@ -28,6 +29,7 @@ class Concordium {
     this.contractSubindex = process.env.SMARTCONTRACT_SUBINDEX;
     this.rawNFTModuleSchema = process.env.SMARTCONTRACT_RAWSCHEMA;
     this.address = process.env.WALLET_ADDRESS;
+    this.private_key = process.env.PRIVATE_KEY;
   }
 
   async validateAccount(message, signature, account) {
@@ -70,30 +72,54 @@ class Concordium {
     );
   }
   async mintNFT(token) {
-    const accountAddress = new AccountAddress(this.address);
+    const accountAddress   = new AccountAddress(this.address);
     const nextAccountNonce = await this.client.getNextAccountNonce(accountAddress);
-    const nonce = nextAccountNonce.nonce;
+    const nonce            = nextAccountNonce.nonce;
+    const signer           = await buildBasicAccountSigner(this.private_key);
+
+    const userInput           = -2000000;
+    const contractName        = this.contractName;
+    const receiveFunctionName = "mint";
+    const receiveName         = contractName + '.' + receiveFunctionName;
+    const rawModuleSchema     = this.rawNFTModuleSchema;
+    const schemaVersion       = SchemaVersion.V1;
+
+    const inputParams = serializeUpdateContractParameters(
+        contractName,
+        receiveFunctionName,
+        userInput,
+        rawModuleSchema,
+        schemaVersion
+    );
 
     const header = {
       expiry: new TransactionExpiry(new Date(Date.now() + 3600000)),
-      nonce: nonce,              // the next nonce for this account, can be found using getNextAccountNonce
+      nonce: nonce,
       sender: accountAddress,
     };
 
-    const simpleTransfer = {
-      amount: new CcdAmount(BigInt(100)),
-      toAddress: new AccountAddress("43TUDbrk8JioxPKqzsYvUy62qD5cqVMJnyvTAQsEWq4DEJHuDo"),
-    };
+    const updateContractPayload = {
+        amount: new CcdAmount(BigInt(0)),
+        address: {
+          index: BigInt(this.contractIndex),
+          subindex: BigInt(this.contractSubindex),
+        },
+        receiveName: receiveName,
+        message: inputParams,
+        maxContractExecutionEnergy:  BigInt(10000)
+      };
+
     const accountTransaction = {
       header: header,
-      payload: simpleTransfer,
-      type: AccountTransactionType.Transfer,
+      payload: updateContractPayload,
+      type: AccountTransactionType.Update,
     };
-    const success = await this.client.sendAccountTransaction(accountTransaction, 'eyIwIjp7IjAiOiIyY2Q1NmFlMzg5ZDFmMTYzM2I4NzQ1MDZlZTMwOTlkNWQxYTFhYjM3MzlkMDA4ZTdhNGE2MTI2NDgwNDU5YzllNTVlNzc1ZDVkNGFmYmQzM2FhNmE3YzM0YmFmOGFhNGE0NGVkMGRjZjg1ZGI0OGE4ZDdlN2NhNmYwMDQxZjEwYSJ9fQ==');
+
+    const transactionSignature = await signTransaction(accountTransaction, signer);
+    const success = await this.client.sendAccountTransaction(accountTransaction, transactionSignature);
     if (success) {
-     console.log('xxxx'); debugger; return;
-    } else {
-     console.log('asdasd'); debugger; return;
+      console.log(success);
+      return success;
     }
   }
 }
