@@ -120,8 +120,8 @@ class Concordium {
 
     const transactionSignature = await signTransaction(accountTransaction, signer);
     const success = await this.client.sendAccountTransaction(accountTransaction, transactionSignature);
+
     if (success) {
-      console.log(success);
       return success;
     }
   }

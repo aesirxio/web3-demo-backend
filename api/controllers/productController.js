@@ -14,7 +14,6 @@ let dirImg   = '/image/';
 
 exports.add = async (req, res) => {
   const token = await concordium.getNextNFT();
-
   const trx   = await concordium.mintNFT(token);
 
   if (!fs.existsSync('.' + dirImg)){
