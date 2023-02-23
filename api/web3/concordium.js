@@ -86,6 +86,7 @@ class Concordium {
       owner: {Account: [address]},
       tokens: [token]
     }
+
     const inputParams = serializeUpdateContractParameters(
         contractName,
         receiveFunctionName,
@@ -116,8 +117,6 @@ class Concordium {
       payload: updateContractPayload,
       type: AccountTransactionType.Update,
     };
-    const lastFinalizedBlockHash = (await this.client.getConsensusStatus()).lastFinalizedBlock;
-    const accountInfo = await this.client.getAccountInfo(accountAddress, lastFinalizedBlockHash);
 
     const transactionSignature = await signTransaction(accountTransaction, signer);
     const success = await this.client.sendAccountTransaction(accountTransaction, transactionSignature);
