@@ -6,7 +6,7 @@ const {
   SchemaVersion,
   CcdAmount,
   AccountTransactionType, AccountAddress, TransactionExpiry, buildBasicAccountSigner,
-  signTransaction, serializeUpdateContractParameters
+  signTransaction, serializeUpdateContractParameters, getAccountTransactionHash
 } = require("@concordium/node-sdk");
 const fs = require("fs");
 
@@ -29,7 +29,6 @@ class Concordium {
     this.contractIndex = process.env.SMARTCONTRACT_INDEX;
     this.contractSubindex = process.env.SMARTCONTRACT_SUBINDEX;
     this.rawNFTModuleSchema = process.env.SMARTCONTRACT_RAWSCHEMA;
-    this.address = process.env.WALLET_ADDRESS;
     this.private_key = process.env.PRIVATE_KEY;
   }
 
@@ -72,8 +71,8 @@ class Concordium {
         "0"
     );
   }
-  async mintNFT(token) {
-    const accountAddress   = new AccountAddress(this.address);
+  async mintNFT(address, token) {
+    const accountAddress   = new AccountAddress(address);
     const nextAccountNonce = await this.client.getNextAccountNonce(accountAddress);
     const nonce            = nextAccountNonce.nonce;
     const signer           = await buildBasicAccountSigner(this.private_key);
@@ -84,7 +83,7 @@ class Concordium {
     const rawModuleSchema     = Buffer.from(fs.readFileSync('./schema.bin'));
     const schemaVersion       = SchemaVersion.V1;
     const parameters          = {
-      owner: {Account: [this.address]},
+      owner: {Account: [address]},
       tokens: [token]
     }
     const inputParams = serializeUpdateContractParameters(
@@ -117,12 +116,14 @@ class Concordium {
       payload: updateContractPayload,
       type: AccountTransactionType.Update,
     };
+    const lastFinalizedBlockHash = (await this.client.getConsensusStatus()).lastFinalizedBlock;
+    const accountInfo = await this.client.getAccountInfo(accountAddress, lastFinalizedBlockHash);
 
     const transactionSignature = await signTransaction(accountTransaction, signer);
     const success = await this.client.sendAccountTransaction(accountTransaction, transactionSignature);
 
     if (success) {
-      return success;
+      return getAccountTransactionHash(accountTransaction, transactionSignature);
     }
   }
 }
