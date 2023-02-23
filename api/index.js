@@ -53,6 +53,9 @@ mongoose
 // Send message for default URL
 app.get("/", (req, res) => res.status(404).end());
 
+// Display image from URL
+app.use('/image', express.static('image'));
+
 // Use Api routes in the App
 app.use("/", apiRoutes);
 // Launch app to listen to specified port
