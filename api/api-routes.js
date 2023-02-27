@@ -25,5 +25,11 @@ const tokenController = require("./controllers/tokenController");
 
 router.route("/token/v1/:token").get(tokenController.list);
 
+// User routes
+const userController = require("./controllers/userController");
+router.route("/user/v1").post(multer().single('avatar'), userController.add);
+router.route("/user/v1").put(multer().single('avatar'), userController.update);
+router.route("/user/v1/:id").get(userController.list);
+
 // Export API routes
 module.exports = router;
